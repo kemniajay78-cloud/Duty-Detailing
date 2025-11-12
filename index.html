@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Duty Detailing Mobile App</title>
+<!-- ✅ iOS PWA meta -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Duty Detailing">
+<link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/icons-pack/icon-sets/png/blue-icon-192.png">
+
+<!-- ✅ Manifest (generated via Blob in JS) -->
+<link id="manifest-placeholder" rel="manifest">
+
+<style>
+:root{--p:#2563eb;--bg:#f8f9fa;--c:#fff;--b:#cbd5e1;--a:#e0e7ff;--t:#1e293b;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--t);}
+header{background:var(--p);color:#fff;text-align:center;padding:12px;font-weight:700;font-size:18px;}
+nav{display:flex;justify-content:space-around;background:#fff;border-bottom:1px solid var(--b);position:sticky;top:0;z-index:5;}
+nav button{flex:1;border:0;background:none;padding:10px;font-size:14px;cursor:pointer;}
+nav button.active{background:var(--a);color:var(--p);font-weight:600;}
+section{display:none;padding:12px;max-width:600px;margin:auto;}
+section.active{display:block;}
+.card{background:var(--c);border-radius:10px;border:1px solid var(--b);box-shadow:0 2px 6px rgba(0,0,0,.05);padding:12px;margin-bottom:14px;}
+h3{color:var(--p);margin-top:0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{border:1px solid var(--b);padding:6px;text-align:center;}
+th{background:var(--a);}
+input,select{border:1px solid var(--b);border-radius:6px;padding:6px;font-size:13px;}
+input[type=number]{width:80px;}
+.btn{background:var(--p);color:#fff;border:0;padding:8px 12px;border-radius:6px;font-size:14px;cursor:pointer;}
+.btn-ghost{background:#fff;color:var(--p);border:1px solid var(--p);}
+.status{margin-top:6px;color:green;font-weight:600;font-size:13px;}
+.muted{color:#64748b;font-size:12px;}
+.note{margin-top:8px;font-size:12px;color:#0f172a;background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;padding:6px;}
+@media(max-width:480px){th,td{font-size:12px;padding:4px;}input,select{font-size:12px;}}
+</style>
+</head>
+<body>
+<header>Duty Detailing</header>
+
+<nav>
+  <button class="active" onclick="showTab('tabSections',this)">Sections</button>
+  <button onclick="showTab('tabDuties',this)">Duties</button>
+  <button onclick="showTab('tabLedger',this)">Ledger</button>
+  <button onclick="showTab('tabSummary',this)">Monthly Summary</button>
+</nav>
+
+<!-- SECTIONS TAB -->
+<section id="tabSections" class="active">
+  <h3>Sections</h3>
+  <button class="btn" onclick="addSection()">➕ Add Section</button>
+  <table id="sectionsTable">
+    <thead><tr><th>Section</th><th>WO</th><th>SGT</th><th>CPL</th><th>LAC</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <button class="btn" onclick="saveSections()">💾 Save</button>
+  <div id="saveSectionsStatus" class="status"></div>
+</section>
+
+<!-- DUTIES TAB -->
+<section id="tabDuties">
+  <h3>Duties</h3>
+  <div class="card">
+    <label>📅 Month:
+      <select id="monthSelect" onchange="loadMonthDuties()"></select>
+    </label><br><br>
+    <label>Duty Name:
+      <select id="dutySelect">
+        <option value="SGT Guard Duty">SGT Guard Duty</option>
+        <option value="CPL Guard Duty">CPL Guard Duty</option>
+        <option value="WBC">WBC</option>
+        <option value="FOR">FOR</option>
+      </select>
+    </label>
+    <input type="text" id="customDuty" placeholder="Add custom duty">
+    <button class="btn-ghost" onclick="addCustomDuty()">Add</button><br><br>
+    <label>Allotted Duties: <input type="number" id="allotted" min="0" value="0"></label>
+    <table>
+      <thead><tr><th>Rank</th><th>Ratio</th></tr></thead>
+      <tbody>
+        <tr><td>WO</td><td><input type="number" id="rWO" step="0.1" value="1"></td></tr>
+        <tr><td>SGT</td><td><input type="number" id="rSGT" step="0.1" value="1"></td></tr>
+        <tr><td>CPL</td><td><input type="number" id="rCPL" step="0.1" value="1"></td></tr>
+        <tr><td>LAC</td><td><input type="number" id="rLAC" step="0.1" value="1"></td></tr>
+      </tbody>
+    </table><br>
+    <button class="btn" onclick="calculateDuty()">Calculate</button>
+    <button class="btn-ghost" onclick="commitDuty()">Commit</button>
+  </div>
+  <div id="dutyResult" class="card muted">No calculation yet.</div>
+</section>
+
+<!-- LEDGER TAB -->
+<section id="tabLedger">
+  <h3>Ledger Summary</h3>
+  <div class="card">
+    <label>📅 Select Month:
+      <select id="ledgerMonth" onchange="renderLedger()"></select>
+    </label>
+  </div>
+  <div id="ledgerBox" class="card"></div>
+</section>
+
+<!-- MONTHLY SUMMARY TAB -->
+<section id="tabSummary">
+  <h3>Monthly Summary</h3>
+  <div class="card">
+    <label>📅 Select Month:
+      <select id="summaryMonth" onchange="renderSummary()"></select>
+    </label>
+    <button class="btn" onclick="downloadSummaryPDF()">📄 PDF</button>
+  </div>
+  <div id="summaryBox" class="card muted">No summary available.</div>
+</section>
+
+<script>
+/* ---------- UI helpers ---------- */
+function showTab(id,btn){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function monthLabel(date){return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;}
+function parseMonthLabel(lbl){const [m,y]=lbl.split(' ');return new Date(parseInt(y,10),MONTHS.indexOf(m),1);}
+
+/* ---------- Populate Month dropdowns ---------- */
+function populateMonths(){
+  const now=new Date();
+  const selects=[document.getElementById('monthSelect'),document.getElementById('summaryMonth'),document.getElementById('ledgerMonth')];
+  selects.forEach(sel=>{
+    if(!sel)return;
+    sel.innerHTML='<option value="all">All Months (Cumulative)</option>';
+    for(let i=-6;i<=6;i++){
+      const d=new Date(now.getFullYear(),now.getMonth()+i,1);
+      const val=monthLabel(d);
+      const opt=document.createElement('option');
+      opt.value=val;opt.textContent=val;
+      if(i===0)opt.selected=true;
+      sel.appendChild(opt);
+    }
+  });
+}
+populateMonths();
+
+/* ---------- Sections ---------- */
+function addSection(p){
+  const tb=document.querySelector('#sectionsTable tbody');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input type=text value="${p?.name||''}" placeholder="Name"></td>
+  <td><input type=number value="${p?.WO||0}"></td>
+  <td><input type=number value="${p?.SGT||0}"></td>
+  <td><input type=number value="${p?.CPL||0}"></td>
+  <td><input type=number value="${p?.LAC||0}"></td>
+  <td><button class="btn" onclick="this.closest('tr').remove()">❌</button></td>`;
+  tb.appendChild(tr);
+}
+function saveSections(){
+  const data=[];
+  document.querySelectorAll('#sectionsTable tbody tr').forEach(r=>{
+    const i=r.querySelectorAll('input');
+    if(!i[0].value.trim())return;
+    data.push({name:i[0].value,WO:+i[1].value,SGT:+i[2].value,CPL:+i[3].value,LAC:+i[4].value});
+  });
+  localStorage.setItem('sectionsData',JSON.stringify(data));
+  document.getElementById('saveSectionsStatus').textContent='✅ Saved';
+}
+
+/* ---------- Duty calc helpers ---------- */
+function addCustomDuty(){
+  const val=document.getElementById('customDuty').value.trim();
+  if(!val)return;
+  const sel=document.getElementById('dutySelect');
+  const opt=document.createElement('option');opt.value=val;opt.textContent=val;
+  sel.appendChild(opt);sel.value=val;document.getElementById('customDuty').value='';
+}
+function largestRemainder(exacts,total){
+  const floor=exacts.map(x=>Math.floor(x)),used=floor.reduce((a,b)=>a+b,0);
+  let rem=total-used;
+  const frac=exacts.map((x,i)=>({i,f:x-Math.floor(x)})).sort((a,b)=>b.f-a.f);
+  let k=0;while(rem>0&&k<frac.length){floor[frac[k++].i]++;rem--;}return floor;
+}
+
+/* ---------- Calculate & Commit ---------- */
+function calculateDuty(){
+  const month=document.getElementById('monthSelect').value;
+  const duty=document.getElementById('dutySelect').value;
+  const allotted=+document.getElementById('allotted').value||0;
+  const ratios={WO:+rWO.value,SGT:+rSGT.value,CPL:+rCPL.value,LAC:+rLAC.value};
+  const secs=JSON.parse(localStorage.getItem('sectionsData')||'[]');
+  if(!secs.length)return alert('Add sections first');
+
+  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
+  const dLedger=ledgerAll[duty]||{};
+  let raw=secs.map(s=>{
+    const calc=(s.WO*ratios.WO)+(s.SGT*ratios.SGT)+(s.CPL*ratios.CPL)+(s.LAC*ratios.LAC);
+    return{sec:s.name,calc,ledger:+dLedger[s.name]||0};
+  });
+  const totalCalc=raw.reduce((a,b)=>a+b.calc,0);
+  const exact=raw.map(r=>totalCalc? r.calc/totalCalc*allotted:0);
+  const adjExact=exact.map((x,i)=>Math.max(0,x-raw[i].ledger));
+  const assigned=largestRemainder(adjExact,allotted);
+
+  const tbl=['<table><tr><th>Section</th><th>Calc</th><th>Ledger</th><th>Adj</th><th>Assigned</th></tr>'];
+  raw.forEach((r,i)=>tbl.push(`<tr><td>${r.sec}</td><td>${r.calc.toFixed(2)}</td><td>${r.ledger.toFixed(2)}</td><td>${adjExact[i].toFixed(2)}</td><td>${assigned[i]}</td></tr>`));
+  tbl.push(`<tr><th colspan=4>Total</th><th>${assigned.reduce((a,b)=>a+b,0)}</th></tr></table>`);
+  document.getElementById('dutyResult').innerHTML=tbl.join('');
+
+  const allDuties=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
+  if(!allDuties[month])allDuties[month]={};
+  allDuties[month][duty]={allotted,ratios,assigned:secs.map((s,i)=>({sec:s.name,count:assigned[i]}))};
+  localStorage.setItem('monthlyDuties',JSON.stringify(allDuties));
+
+  window._lastCalc={month,duty,secs,exact,assigned};
+}
+
+function commitDuty(){
+  if(!window._lastCalc)return alert('Calculate first');
+  const {month,duty,secs,exact,assigned}=window._lastCalc;
+
+  // 1) Update cumulative ledger
+  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
+  const dLedger=ledgerAll[duty]||{};
+  const deltas={};
+  secs.forEach((s,i)=>{
+    const delta=(assigned[i]-exact[i]);
+    deltas[s.name]=+delta.toFixed(3);
+    dLedger[s.name]=((+dLedger[s.name]||0)+delta).toFixed(3);
+  });
+  ledgerAll[duty]=dLedger;
+  localStorage.setItem('ledgerData',JSON.stringify(ledgerAll));
+
+  // 2) Update month-wise ledger history
+  const hist=JSON.parse(localStorage.getItem('ledgerHistory')||'{}');
+  if(!hist[month])hist[month]={};
+  if(!hist[month][duty])hist[month][duty]={};
+  Object.keys(deltas).forEach(sec=>{
+    hist[month][duty][sec]=((+hist[month][duty][sec]||0)+deltas[sec]);
+  });
+  localStorage.setItem('ledgerHistory',JSON.stringify(hist));
+
+  alert('✅ Committed');
+  renderLedger();
+  renderSummary();
+}
+
+/* ---------- Ledger Rendering (month-wise with fallback) ---------- */
+let _lastDeletedBackup=null;let _undoTimer=null;
+
+function getLatestMonthWithData(targetLbl, hist){
+  if(!hist || Object.keys(hist).length===0) return null;
+  if(targetLbl==="all") return null;
+  const target=parseMonthLabel(targetLbl);
+  const months=Object.keys(hist).sort((a,b)=>parseMonthLabel(a)-parseMonthLabel(b));
+  let candidate=null;
+  months.forEach(m=>{
+    const d=parseMonthLabel(m);
+    if(d<=target && Object.keys(hist[m]).length>0) candidate=m;
+  });
+  return candidate;
+}
+
+function renderLedger(){
+  const ledgerSel=document.getElementById('ledgerMonth').value;
+  const sections=JSON.parse(localStorage.getItem('sectionsData')||'[]');
+  if(!sections.length){document.getElementById('ledgerBox').innerHTML='<div class="muted">No sections available.</div>';return;}
+  const sectionNames=sections.map(s=>s.name);
+
+  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');          // cumulative
+  const hist=JSON.parse(localStorage.getItem('ledgerHistory')||'{}');            // per-month
+
+  let dataSource={}, labelNote='';
+  if(ledgerSel==='all'){
+    dataSource=ledgerAll;
+  }else{
+    let monthToUse=ledgerSel;
+    if(!hist[monthToUse] || Object.keys(hist[monthToUse]).length===0){
+      const fallback=getLatestMonthWithData(ledgerSel, hist);
+      if(fallback){
+        monthToUse=fallback;
+        labelNote=`Showing <b>${fallback}</b> (latest available)`;
+      }else{
+        document.getElementById('ledgerBox').innerHTML='<div class="muted">No ledger available for selected month or earlier.</div>';
+        return;
+      }
+    }
+    dataSource=hist[monthToUse]||{};
+    if(!labelNote) labelNote=`Showing <b>${monthToUse}</b>`;
+  }
+
+  const duties=Object.keys(dataSource);
+  if(!duties.length){
+    document.getElementById('ledgerBox').innerHTML='<div class="muted">No ledger data yet.</div>';
+    return;
+  }
+
+  let html = '<table><tr><th>Duty</th>';
+  sectionNames.forEach(s=>html+=`<th>${s}</th>`);
+  html+='<th>Total</th><th>Action</th></tr>';
+
+  duties.forEach(duty=>{
+    let rowTotal=0;
+    html+=`<tr><td><b>${duty}</b></td>`;
+    sectionNames.forEach(sec=>{
+      const val=parseFloat((dataSource[duty]?.[sec])||0);
+      const color=val>0?'style="color:green;font-weight:600;"':val<0?'style="color:red;font-weight:600;"':'';
+      rowTotal+=val;
+      html+=`<td ${color}>${isNaN(val)?'0.00':val.toFixed(2)}</td>`;
+    });
+    const colorT=rowTotal>0?'style="color:green;font-weight:700;"':rowTotal<0?'style="color:red;font-weight:700;"':'';
+    html+=`<td ${colorT}>${rowTotal.toFixed(2)}</td>
+           <td><button class="btn-ghost" title="Delete everywhere (all months)" onclick="deleteLedgerEntry('${duty}')">🗑️</button></td></tr>`;
+  });
+  html+='</table>';
+  html+='<div class="muted" style="margin-top:8px;">🟢 Positive = Section excess | 🔴 Negative = Section deficit</div>';
+  if(labelNote) html+=`<div class="note">${labelNote}</div>`;
+  document.getElementById('ledgerBox').innerHTML=html;
+}
+
+/* ---------- Delete (all months) + Undo + Clean ---------- */
+function deleteLedgerEntry(duty){
+  if(!confirm(`Delete "${duty}" from ledger and ALL months? This also removes it from Monthly Summary.`))return;
+
+  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
+  const monthly=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
+  const hist=JSON.parse(localStorage.getItem('ledgerHistory')||'{}');
+
+  // Backup
+  _lastDeletedBackup={
+    duty,
+    ledgerData: ledgerAll[duty]||null,
+    monthlyData: {},
+    histData: {}
+  };
+  for(const m in monthly){ if(monthly[m][duty]) _lastDeletedBackup.monthlyData[m]=monthly[m][duty]; }
+  for(const m in hist){ if(hist[m][duty]) _lastDeletedBackup.histData[m]=hist[m][duty]; }
+
+  // Delete everywhere
+  delete ledgerAll[duty];
+  for(const m in monthly){
+    if(monthly[m][duty]) delete monthly[m][duty];
+    if(Object.keys(monthly[m]).length===0) delete monthly[m];
+  }
+  for(const m in hist){
+    if(hist[m][duty]) delete hist[m][duty];
+    if(Object.keys(hist[m]).length===0) delete hist[m];
+  }
+
+  // Save
+  localStorage.setItem('ledgerData',JSON.stringify(ledgerAll));
+  localStorage.setItem('monthlyDuties',JSON.stringify(monthly));
+  localStorage.setItem('ledgerHistory',JSON.stringify(hist));
+
+  // Reconcile and refresh
+  reconcileMonthly(); // safety clean (removes ghosts like WBC)
+  renderLedger();
+  renderSummary();
+  showUndoBanner(duty);
+}
+
+function showUndoBanner(duty){
+  const old=document.getElementById('undoBanner'); if(old) old.remove();
+  const banner=document.createElement('div');
+  banner.id='undoBanner';
+  banner.style.position='fixed';
+  banner.style.bottom='10px';
+  banner.style.left='50%';
+  banner.style.transform='translateX(-50%)';
+  banner.style.background='#2563eb';
+  banner.style.color='white';
+  banner.style.padding='10px 18px';
+  banner.style.borderRadius='8px';
+  banner.style.fontSize='14px';
+  banner.style.boxShadow='0 3px 8px rgba(0,0,0,0.3)';
+  banner.style.zIndex='9999';
+  banner.innerHTML=`Deleted <b>${duty}</b> from all months. &nbsp; <button id="undoBtn" style="background:white;color:#2563eb;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-weight:600;">Undo</button>`;
+  document.body.appendChild(banner);
+  document.getElementById('undoBtn').onclick=restoreDeletedDuty;
+  clearTimeout(_undoTimer);
+  _undoTimer=setTimeout(()=>{if(banner.parentNode)banner.remove();_lastDeletedBackup=null;},10000);
+}
+
+function restoreDeletedDuty(){
+  if(!_lastDeletedBackup) return;
+  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
+  const monthly=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
+  const hist=JSON.parse(localStorage.getItem('ledgerHistory')||'{}');
+  const {duty,ledgerData,monthlyData,histData}=_lastDeletedBackup;
+
+  if(ledgerData) ledgerAll[duty]=ledgerData;
+  for(const m in monthlyData){
+    if(!monthly[m]) monthly[m]={};
+    monthly[m][duty]=monthlyData[m];
+  }
+  for(const m in histData){
+    if(!hist[m]) hist[m]={};
+    hist[m][duty]=histData[m];
+  }
+
+  localStorage.setItem('ledgerData',JSON.stringify(ledgerAll));
+  localStorage.setItem('monthlyDuties',JSON.stringify(monthly));
+  localStorage.setItem('ledgerHistory',JSON.stringify(hist));
+
+  const banner=document.getElementById('undoBanner'); if(banner) banner.remove();
+  alert(`✅ Restored "${duty}" across all months.`);
+  renderLedger();
+  renderSummary();
+  _lastDeletedBackup=null;
+  clearTimeout(_undoTimer);
+}
+
+/* ---------- Monthly Summary ---------- */
+function renderSummary(){
+  const month=document.getElementById('summaryMonth').value;
+  const all=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
+  const data=all[month];
+  const secs=JSON.parse(localStorage.getItem('sectionsData')||'[]');
+  if(!data){document.getElementById('summaryBox').innerHTML=`<b>${month}</b>: No data.`;return;}
+  const duties=Object.keys(data);
+  if(!duties.length){document.getElementById('summaryBox').innerHTML=`<b>${month}</b>: No data.`;return;}
+  const secMap={};secs.forEach(s=>secMap[s.name]={});
+  duties.forEach(d=>{(data[d]?.assigned||[]).forEach(a=>secMap[a.sec][d]=a.count);});
+  let html='<table><tr><th>Section</th>'+duties.map(d=>`<th>${d}</th>`).join('')+'<th>Total</th></tr>';
+  let grandTotals=new Array(duties.length).fill(0),grandSum=0;
+  for(const s in secMap){
+    let rowTotal=0;
+    const row=duties.map((d,i)=>{const val=secMap[s][d]||0;grandTotals[i]+=val;rowTotal+=val;return `<td>${val}</td>`;}).join('');
+    grandSum+=rowTotal;
+    html+=`<tr><td>${s}</td>${row}<td><b>${rowTotal}</b></td></tr>`;
+  }
+  html+=`<tr><th>Total</th>${grandTotals.map(g=>`<th>${g}</th>`).join('')}<th>${grandSum}</th></tr></table>`;
+  document.getElementById('summaryBox').innerHTML=html;
+}
+
+/* ---------- Reconcile Monthly (remove duties not in ledger) ---------- */
+function reconcileMonthly(){
+  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
+  const monthly=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
+  let changed=false;
+  for(const m in monthly){
+    for(const d in monthly[m]){
+      if(!ledgerAll[d]){ delete monthly[m][d]; changed=true; }
+    }
+    if(Object.keys(monthly[m]).length===0){ delete monthly[m]; changed=true; }
+  }
+  if(changed) localStorage.setItem('monthlyDuties',JSON.stringify(monthly));
+}
+
+/* ---------- Print PDF ---------- */
+function downloadSummaryPDF(){
+  const month=document.getElementById('summaryMonth').value;
+  const html=document.getElementById('summaryBox').innerHTML;
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>${month} Summary</title></head><body>${html}</body></html>`);
+  w.print();w.close();
+}
+
+/* ---------- Misc ---------- */
+function loadMonthDuties(){
+  const month=document.getElementById('monthSelect').value;
+  const data=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
+  document.getElementById('dutyResult').innerHTML=data[month]?`<b>${month}</b> data loaded.`:`No data yet.`;
+}
+
+/* ---------- Boot ---------- */
+window.onload=()=>{
+  const s=JSON.parse(localStorage.getItem('sectionsData')||'[]');
+  if(s.length)s.forEach(addSection);else addSection();
+  reconcileMonthly();               // Clean lingering duties (e.g., old WBC) from monthly if not in ledger
+  renderLedger();
+  renderSummary();
+};
+</script>
+</body>
+</html>
