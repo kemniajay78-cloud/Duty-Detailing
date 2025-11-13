@@ -2,72 +2,325 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Duty Detailing Mobile App</title>
-<!-- ✅ iOS PWA meta -->
+
+<!-- PWA iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Duty Detailing">
 <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/icons-pack/icon-sets/png/blue-icon-192.png">
 
-<!-- ✅ Manifest (generated via Blob in JS) -->
 <link id="manifest-placeholder" rel="manifest">
 
 <style>
-:root{--p:#2563eb;--bg:#f8f9fa;--c:#fff;--b:#cbd5e1;--a:#e0e7ff;--t:#1e293b;}
+:root{
+  --p:#2563eb;
+  --bg:#f8f9fa;
+  --c:#fff;
+  --b:#cbd5e1;
+  --a:#e0e7ff;
+  --t:#1e293b;
+  --menu:#ffffff;
+  --menu-shadow:rgba(0,0,0,0.15);
+}
 *{box-sizing:border-box;}
-body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--t);}
-header{background:var(--p);color:#fff;text-align:center;padding:12px;font-weight:700;font-size:18px;}
-nav{display:flex;justify-content:space-around;background:#fff;border-bottom:1px solid var(--b);position:sticky;top:0;z-index:5;}
-nav button{flex:1;border:0;background:none;padding:10px;font-size:14px;cursor:pointer;}
-nav button.active{background:var(--a);color:var(--p);font-weight:600;}
-section{display:none;padding:12px;max-width:600px;margin:auto;}
-section.active{display:block;}
-.card{background:var(--c);border-radius:10px;border:1px solid var(--b);box-shadow:0 2px 6px rgba(0,0,0,.05);padding:12px;margin-bottom:14px;}
+
+body{
+  margin:0;
+  font-family:system-ui,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--t);
+  overflow-x:hidden;
+}
+
+/* HEADER */
+header{
+  background:var(--p);
+  color:white;
+  text-align:center;
+  padding:14px;
+  font-size:18px;
+  font-weight:700;
+  position:relative;
+}
+
+#hamburgerBtn{
+  position:absolute;
+  left:12px;
+  top:12px;
+  font-size:22px;
+  cursor:pointer;
+  background:none;
+  border:0;
+  color:white;
+}
+
+/* SIDE MENU */
+#sideMenu{
+  position:fixed;
+  top:0;
+  left:-260px;
+  width:260px;
+  height:100vh;
+  background:var(--menu);
+  box-shadow:3px 0 10px var(--menu-shadow);
+  z-index:2000;
+  transition:0.3s;
+  padding-top:60px;
+}
+#sideMenu.open{
+  left:0;
+}
+
+.sideMenuItem{
+  padding:14px 20px;
+  font-size:15px;
+  border-bottom:1px solid var(--b);
+  cursor:pointer;
+}
+.sideMenuItem:hover{
+  background:var(--a);
+  color:var(--p);
+  font-weight:600;
+}
+
+#menuBackdrop{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.25);
+  z-index:1500;
+  display:none;
+}
+#menuBackdrop.show{
+  display:block;
+}
+
+/* SECTION BODY */
+section{
+  display:none;
+  padding:12px;
+  max-width:640px;
+  margin:auto;
+}
+section.active{
+  display:block;
+}
+
+.card{
+  background:var(--c);
+  border-radius:10px;
+  border:1px solid var(--b);
+  padding:12px;
+  margin-bottom:16px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
 h3{color:var(--p);margin-top:0;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-th,td{border:1px solid var(--b);padding:6px;text-align:center;}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+th,td{
+  padding:6px;
+  border:1px solid var(--b);
+  text-align:center;
+}
 th{background:var(--a);}
-input,select{border:1px solid var(--b);border-radius:6px;padding:6px;font-size:13px;}
+
+input,select{
+  border:1px solid var(--b);
+  border-radius:6px;
+  padding:6px;
+  font-size:13px;
+}
 input[type=number]{width:80px;}
-.btn{background:var(--p);color:#fff;border:0;padding:8px 12px;border-radius:6px;font-size:14px;cursor:pointer;}
-.btn-ghost{background:#fff;color:var(--p);border:1px solid var(--p);}
-.status{margin-top:6px;color:green;font-weight:600;font-size:13px;}
-.muted{color:#64748b;font-size:12px;}
-.note{margin-top:8px;font-size:12px;color:#0f172a;background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;padding:6px;}
-@media(max-width:480px){th,td{font-size:12px;padding:4px;}input,select{font-size:12px;}}
+
+.btn{
+  background:var(--p);
+  color:white;
+  border:0;
+  padding:8px 12px;
+  border-radius:6px;
+  font-size:14px;
+  cursor:pointer;
+}
+.btn-ghost{
+  background:white;
+  color:var(--p);
+  border:1px solid var(--p);
+}
+
+.muted{
+  color:#64748b;
+  font-size:12px;
+}
+
+.status{
+  margin-top:6px;
+  color:green;
+  font-weight:600;
+  font-size:13px;
+}
+
+.note{
+  background:#eef2ff;
+  border:1px solid #c7d2fe;
+  padding:6px;
+  border-radius:8px;
+  margin-top:8px;
+  font-size:12px;
+}
+
+/* MOBILE OPTIMIZED SECTIONS TABLE */
+@media(max-width:480px){
+  #sectionsTable input[type="text"]{
+    width:100px;
+  }
+  #sectionsTable input[type="number"]{
+    width:45px;
+    padding:4px;
+  }
+  #sectionsTable th{
+    font-size:11px;
+    padding:3px;
+  }
+  #sectionsTable td{
+    padding:4px 2px;
+  }
+}
+
+/* DUTY DATES TABLE */
+#datesTableContainer{
+  max-height:320px;
+  overflow-y:auto;
+  border:1px solid var(--b);
+  border-radius:8px;
+  margin-top:10px;
+}
+
+.weekendCell{background:#fff7ed;}
+.holidayCell{background:#ffe4e6;}
+
+.holidayTag{
+  display:inline-block;
+  background:#fee2e2;
+  color:#b91c1c;
+  border:1px solid #fecaca;
+  padding:4px 8px;
+  border-radius:6px;
+  margin:3px;
+  font-size:12px;
+}
+.holidayTag button{
+  margin-left:6px;
+  background:none;
+  border:0;
+  color:#b91c1c;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+#saveBanner{
+  position:fixed;
+  bottom:15px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#2563eb;
+  color:white;
+  padding:10px 18px;
+  border-radius:8px;
+  font-size:14px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.3);
+  display:none;
+  z-index:9999;
+}
+
+/* HISTORY TAB */
+.historyTabs{
+  display:flex;
+  border-bottom:1px solid var(--b);
+  margin-bottom:12px;
+}
+.historyTabs button{
+  flex:1;
+  padding:10px;
+  background:white;
+  border:0;
+  cursor:pointer;
+}
+.historyTabs button.active{
+  background:var(--a);
+  color:var(--p);
+  font-weight:600;
+}
 </style>
 </head>
+
 <body>
-<header>Duty Detailing</header>
 
-<nav>
-  <button class="active" onclick="showTab('tabSections',this)">Sections</button>
-  <button onclick="showTab('tabDuties',this)">Duties</button>
-  <button onclick="showTab('tabLedger',this)">Ledger</button>
-  <button onclick="showTab('tabSummary',this)">Monthly Summary</button>
-</nav>
+<header>
+  <button id="hamburgerBtn">☰</button>
+  Duty Detailing
+</header>
 
-<!-- SECTIONS TAB -->
+<div id="sideMenu">
+  <div class="sideMenuItem" onclick="showTabFromMenu('tabSections')">Sections</div>
+  <div class="sideMenuItem" onclick="showTabFromMenu('tabDuties')">Duties</div>
+  <div class="sideMenuItem" onclick="showTabFromMenu('tabLedger')">Ledger</div>
+  <div class="sideMenuItem" onclick="showTabFromMenu('tabSummary')">Monthly Summary</div>
+  <div class="sideMenuItem" onclick="showTabFromMenu('tabDates')">Duty Dates</div>
+  <div class="sideMenuItem" onclick="showTabFromMenu('tabHistory')">All Duty Records</div>
+</div>
+
+<div id="menuBackdrop"></div>
+<!-- ============================================================
+     SECTIONS TAB
+============================================================ -->
 <section id="tabSections" class="active">
   <h3>Sections</h3>
+
   <button class="btn" onclick="addSection()">➕ Add Section</button>
-  <table id="sectionsTable">
-    <thead><tr><th>Section</th><th>WO</th><th>SGT</th><th>CPL</th><th>LAC</th><th></th></tr></thead>
+
+  <table id="sectionsTable" style="margin-top:10px;">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>WO</th>
+        <th>SGT</th>
+        <th>CPL</th>
+        <th>LAC</th>
+        <th></th>
+      </tr>
+    </thead>
     <tbody></tbody>
   </table>
-  <button class="btn" onclick="saveSections()">💾 Save</button>
+
+  <button class="btn" style="margin-top:10px;" onclick="saveSections()">💾 Save</button>
   <div id="saveSectionsStatus" class="status"></div>
 </section>
 
-<!-- DUTIES TAB -->
+
+
+<!-- ============================================================
+     DUTIES TAB
+============================================================ -->
 <section id="tabDuties">
-  <h3>Duties</h3>
+  <h3>Duty Calculation</h3>
+
   <div class="card">
-    <label>📅 Month:
+    <label><b>📅 Month:</b>
       <select id="monthSelect" onchange="loadMonthDuties()"></select>
-    </label><br><br>
-    <label>Duty Name:
+    </label>
+
+    <br><br>
+
+    <label><b>Duty Name:</b>
       <select id="dutySelect">
         <option value="SGT Guard Duty">SGT Guard Duty</option>
         <option value="CPL Guard Duty">CPL Guard Duty</option>
@@ -75,405 +328,1402 @@ input[type=number]{width:80px;}
         <option value="FOR">FOR</option>
       </select>
     </label>
-    <input type="text" id="customDuty" placeholder="Add custom duty">
-    <button class="btn-ghost" onclick="addCustomDuty()">Add</button><br><br>
-    <label>Allotted Duties: <input type="number" id="allotted" min="0" value="0"></label>
+
+    <input type="text" id="customDuty" placeholder="Add custom duty" style="margin-left:6px;">
+    <button class="btn-ghost" onclick="addCustomDuty()">Add</button>
+
+    <br><br>
+
+    <label><b>Allotted Duties:</b>
+      <input type="number" id="allotted" min="0" value="0">
+    </label>
+
+    <br><br>
+
     <table>
-      <thead><tr><th>Rank</th><th>Ratio</th></tr></thead>
+      <thead>
+        <tr><th>Rank</th><th>Ratio</th></tr>
+      </thead>
       <tbody>
         <tr><td>WO</td><td><input type="number" id="rWO" step="0.1" value="1"></td></tr>
         <tr><td>SGT</td><td><input type="number" id="rSGT" step="0.1" value="1"></td></tr>
         <tr><td>CPL</td><td><input type="number" id="rCPL" step="0.1" value="1"></td></tr>
         <tr><td>LAC</td><td><input type="number" id="rLAC" step="0.1" value="1"></td></tr>
       </tbody>
-    </table><br>
+    </table>
+
+    <br>
+
     <button class="btn" onclick="calculateDuty()">Calculate</button>
     <button class="btn-ghost" onclick="commitDuty()">Commit</button>
   </div>
+
   <div id="dutyResult" class="card muted">No calculation yet.</div>
 </section>
 
-<!-- LEDGER TAB -->
+
+
+<!-- ============================================================
+     LEDGER TAB
+============================================================ -->
 <section id="tabLedger">
   <h3>Ledger Summary</h3>
+
   <div class="card">
-    <label>📅 Select Month:
+    <label><b>📅 Select Month:</b>
       <select id="ledgerMonth" onchange="renderLedger()"></select>
     </label>
   </div>
+
   <div id="ledgerBox" class="card"></div>
 </section>
 
-<!-- MONTHLY SUMMARY TAB -->
+
+
+<!-- ============================================================
+     MONTHLY SUMMARY TAB
+============================================================ -->
 <section id="tabSummary">
   <h3>Monthly Summary</h3>
+
   <div class="card">
-    <label>📅 Select Month:
+    <label><b>📅 Select Month:</b>
       <select id="summaryMonth" onchange="renderSummary()"></select>
     </label>
-    <button class="btn" onclick="downloadSummaryPDF()">📄 PDF</button>
+
+    <button class="btn" style="margin-left:10px;" onclick="downloadSummaryPDF()">📄 PDF</button>
   </div>
+
   <div id="summaryBox" class="card muted">No summary available.</div>
 </section>
+<!-- ============================================================
+     DUTY DATES TAB
+============================================================ -->
+<section id="tabDates">
+  <h3>Duty Dates</h3>
 
+  <div class="card">
+
+    <!-- Month dropdown -->
+    <label><b>📅 Month:</b>
+      <select id="datesMonth" onchange="loadDatesDutyDropdown()"></select>
+    </label>
+
+    <br><br>
+
+    <!-- Duty name dropdown -->
+    <label><b>Duty:</b>
+      <select id="datesDuty" onchange="loadManualDates()"></select>
+    </label>
+
+  </div>
+
+  <!-- ===================== HOLIDAYS ====================== -->
+  <div class="card">
+    <h4 style="margin-top:0;color:var(--p);">Holidays</h4>
+
+    <input type="date" id="holidayInput">
+    <button class="btn-ghost" onclick="addHoliday()">Add Holiday</button>
+
+    <div id="holidayListBox" style="margin-top:10px;"></div>
+  </div>
+
+
+  <!-- ===================== MANUAL DATES ====================== -->
+  <div class="card">
+    <h4 style="margin-top:0;color:var(--p);">Manual Dates</h4>
+
+    <!-- Single date add -->
+    <input type="date" id="manualDateInput">
+    <button class="btn-ghost" onclick="addManualDutyDate()">Add Date</button>
+
+    <br><br>
+
+    <!-- Multi-date add -->
+    <label><b>Multi dates (comma-separated days):</b></label>
+    <input type="text" id="multiDatesInput" placeholder="e.g. 3,7,10,22">
+    <button class="btn-ghost" onclick="addMultipleManualDates()">Add Multiple</button>
+
+    <div id="manualDatesList" style="margin-top:10px;"></div>
+  </div>
+
+
+  <!-- ===================== AUTO GENERATION ====================== -->
+  <div class="card">
+    <h4 style="margin-top:0;color:var(--p);">Generate Dates</h4>
+
+    <button class="btn" onclick="generateDutyDates()">Auto Generate</button>
+    <button class="btn-ghost" onclick="generateFromManualDates()">Use Manual Dates</button>
+  </div>
+
+
+  <!-- ===================== RESULT TABLE ====================== -->
+  <div class="card">
+    <h4 style="margin-top:0;color:var(--p);">Generated Duty Dates</h4>
+
+    <div id="datesTableContainer">
+      <div class="muted">No data.</div>
+    </div>
+
+    <button class="btn" style="margin-top:10px;" onclick="saveDutyDates()">💾 Save Dates</button>
+  </div>
+
+  <div id="saveBanner">Saved!</div>
+
+</section>
+<!-- ============================================================
+     ALL DUTY RECORDS — HISTORY TAB
+============================================================ -->
+<section id="tabHistory">
+  <h3>All Duty Records</h3>
+
+  <div class="historyTabs">
+    <button id="hTab1" class="active" onclick="setHistoryView(1)">By Month + Duty</button>
+    <button id="hTab2" onclick="setHistoryView(2)">By Month (All Duties)</button>
+    <button id="hTab3" onclick="setHistoryView(3)">All Months</button>
+  </div>
+
+
+  <!-- ===================== VIEW 1 ====================== -->
+  <div id="historyView1" style="display:block;">
+
+    <div class="card">
+      <label><b>📅 Month:</b>
+        <select id="historyMonth1" onchange="loadHistoryDutyDropdown()"></select>
+      </label>
+
+      <label style="margin-left:10px;"><b>Duty:</b>
+        <select id="historyDuty1" onchange="renderHistoryView1()"></select>
+      </label>
+
+      <button class="btn" style="margin-left:10px;" onclick="exportHistoryPDF(1)">📄 Export</button>
+    </div>
+
+    <div id="historyTable1" class="card muted">No data.</div>
+  </div>
+
+
+
+  <!-- ===================== VIEW 2 ====================== -->
+  <div id="historyView2" style="display:none;">
+
+    <div class="card">
+      <label><b>📅 Month:</b>
+        <select id="historyMonth2" onchange="renderHistoryView2()"></select>
+      </label>
+
+      <button class="btn" style="margin-left:10px;" onclick="exportHistoryPDF(2)">📄 Export</button>
+    </div>
+
+    <div id="historyTable2" class="card muted">No data.</div>
+  </div>
+
+
+
+  <!-- ===================== VIEW 3 ====================== -->
+  <div id="historyView3" style="display:none;">
+
+    <div class="card">
+      <button class="btn" onclick="exportHistoryPDF(3)">📄 Export All</button>
+    </div>
+
+    <div id="historyTable3" class="card muted">No data.</div>
+  </div>
+
+</section>
 <script>
-/* ---------- UI helpers ---------- */
-function showTab(id,btn){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-}
-const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-function monthLabel(date){return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;}
-function parseMonthLabel(lbl){const [m,y]=lbl.split(' ');return new Date(parseInt(y,10),MONTHS.indexOf(m),1);}
 
-/* ---------- Populate Month dropdowns ---------- */
+/* ============================================================
+   HAMBURGER MENU
+============================================================ */
+const sideMenu = document.getElementById('sideMenu');
+const backdrop = document.getElementById('menuBackdrop');
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+
+hamburgerBtn.onclick = () => {
+  sideMenu.classList.add('open');
+  backdrop.classList.add('show');
+};
+backdrop.onclick = () => {
+  sideMenu.classList.remove('open');
+  backdrop.classList.remove('show');
+};
+
+function showTabFromMenu(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  sideMenu.classList.remove('open');
+  backdrop.classList.remove('show');
+}
+
+/* ============================================================
+   TAB SWITCHING
+============================================================ */
+function showTab(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+
+/* ============================================================
+   MONTH UTILITIES
+============================================================ */
+const MONTHS = [
+ "January","February","March","April","May","June",
+ "July","August","September","October","November","December"
+];
+
+function monthLabel(date){
+  return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+function parseMonthLabel(lbl){
+  const [m,y] = lbl.split(" ");
+  return new Date(parseInt(y), MONTHS.indexOf(m), 1);
+}
+
+
+/* ============================================================
+   POPULATE ALL MONTH SELECTS
+============================================================ */
 function populateMonths(){
   const now=new Date();
-  const selects=[document.getElementById('monthSelect'),document.getElementById('summaryMonth'),document.getElementById('ledgerMonth')];
-  selects.forEach(sel=>{
-    if(!sel)return;
-    sel.innerHTML='<option value="all">All Months (Cumulative)</option>';
-    for(let i=-6;i<=6;i++){
-      const d=new Date(now.getFullYear(),now.getMonth()+i,1);
-      const val=monthLabel(d);
-      const opt=document.createElement('option');
-      opt.value=val;opt.textContent=val;
-      if(i===0)opt.selected=true;
+  const ids=[
+    "monthSelect","ledgerMonth","summaryMonth","datesMonth",
+    "historyMonth1","historyMonth2"
+  ];
+
+  ids.forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel) return;
+
+    sel.innerHTML="";
+
+    if(id !== "datesMonth" && id !== "historyMonth1" && id !== "historyMonth2"){
+      const opt=document.createElement("option");
+      opt.value="all";
+      opt.textContent="All Months (Cumulative)";
       sel.appendChild(opt);
     }
+
+    for(let i=-6;i<=6;i++){
+      const dt=new Date(now.getFullYear(), now.getMonth()+i, 1);
+      const lbl=monthLabel(dt);
+      const o=document.createElement("option");
+      o.value=lbl;
+      o.textContent=lbl;
+      if(i===0) o.selected=true;
+      sel.appendChild(o);
+    }
   });
 }
-populateMonths();
 
-/* ---------- Sections ---------- */
+
+/* ============================================================
+   SECTIONS TAB
+============================================================ */
 function addSection(p){
-  const tb=document.querySelector('#sectionsTable tbody');
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td><input type=text value="${p?.name||''}" placeholder="Name"></td>
-  <td><input type=number value="${p?.WO||0}"></td>
-  <td><input type=number value="${p?.SGT||0}"></td>
-  <td><input type=number value="${p?.CPL||0}"></td>
-  <td><input type=number value="${p?.LAC||0}"></td>
-  <td><button class="btn" onclick="this.closest('tr').remove()">❌</button></td>`;
+  const tb=document.querySelector("#sectionsTable tbody");
+  const tr=document.createElement("tr");
+
+  tr.innerHTML = `
+    <td><input type="text" value="${p?.name||''}" placeholder="Name"></td>
+    <td><input type="number" value="${p?.WO||0}"></td>
+    <td><input type="number" value="${p?.SGT||0}"></td>
+    <td><input type="number" value="${p?.CPL||0}"></td>
+    <td><input type="number" value="${p?.LAC||0}"></td>
+    <td><button class="btn" onclick="this.closest('tr').remove()">❌</button></td>
+  `;
   tb.appendChild(tr);
 }
+
 function saveSections(){
-  const data=[];
-  document.querySelectorAll('#sectionsTable tbody tr').forEach(r=>{
-    const i=r.querySelectorAll('input');
-    if(!i[0].value.trim())return;
-    data.push({name:i[0].value,WO:+i[1].value,SGT:+i[2].value,CPL:+i[3].value,LAC:+i[4].value});
+  const arr=[];
+  document.querySelectorAll("#sectionsTable tbody tr").forEach(r=>{
+    const i=r.querySelectorAll("input");
+    if(!i[0].value.trim()) return;
+
+    arr.push({
+      name:i[0].value,
+      WO:+i[1].value,
+      SGT:+i[2].value,
+      CPL:+i[3].value,
+      LAC:+i[4].value
+    });
   });
-  localStorage.setItem('sectionsData',JSON.stringify(data));
-  document.getElementById('saveSectionsStatus').textContent='✅ Saved';
+
+  localStorage.setItem("sectionsData", JSON.stringify(arr));
+  document.getElementById("saveSectionsStatus").textContent="✅ Saved";
 }
 
-/* ---------- Duty calc helpers ---------- */
+
+/* ============================================================
+   CUSTOM DUTY ADD
+============================================================ */
 function addCustomDuty(){
-  const val=document.getElementById('customDuty').value.trim();
-  if(!val)return;
-  const sel=document.getElementById('dutySelect');
-  const opt=document.createElement('option');opt.value=val;opt.textContent=val;
-  sel.appendChild(opt);sel.value=val;document.getElementById('customDuty').value='';
+  const v=document.getElementById("customDuty").value.trim();
+  if(!v) return;
+
+  const s=document.getElementById("dutySelect");
+  const o=document.createElement("option");
+  o.value=v;
+  o.textContent=v;
+  s.appendChild(o);
+
+  s.value=v;
+  document.getElementById("customDuty").value="";
 }
+
+
+/* ============================================================
+   LARGEST REMAINDER METHOD
+============================================================ */
 function largestRemainder(exacts,total){
-  const floor=exacts.map(x=>Math.floor(x)),used=floor.reduce((a,b)=>a+b,0);
+  const floor=exacts.map(x=>Math.floor(x));
+  const used=floor.reduce((a,b)=>a+b,0);
   let rem=total-used;
-  const frac=exacts.map((x,i)=>({i,f:x-Math.floor(x)})).sort((a,b)=>b.f-a.f);
-  let k=0;while(rem>0&&k<frac.length){floor[frac[k++].i]++;rem--;}return floor;
-}
 
-/* ---------- Calculate & Commit ---------- */
-function calculateDuty(){
-  const month=document.getElementById('monthSelect').value;
-  const duty=document.getElementById('dutySelect').value;
-  const allotted=+document.getElementById('allotted').value||0;
-  const ratios={WO:+rWO.value,SGT:+rSGT.value,CPL:+rCPL.value,LAC:+rLAC.value};
-  const secs=JSON.parse(localStorage.getItem('sectionsData')||'[]');
-  if(!secs.length)return alert('Add sections first');
+  const frac=exacts.map((x,i)=>({i,f:x-Math.floor(x)}))
+                   .sort((a,b)=>b.f-a.f);
 
-  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
-  const dLedger=ledgerAll[duty]||{};
-  let raw=secs.map(s=>{
-    const calc=(s.WO*ratios.WO)+(s.SGT*ratios.SGT)+(s.CPL*ratios.CPL)+(s.LAC*ratios.LAC);
-    return{sec:s.name,calc,ledger:+dLedger[s.name]||0};
-  });
-  const totalCalc=raw.reduce((a,b)=>a+b.calc,0);
-  const exact=raw.map(r=>totalCalc? r.calc/totalCalc*allotted:0);
-  const adjExact=exact.map((x,i)=>Math.max(0,x-raw[i].ledger));
-  const assigned=largestRemainder(adjExact,allotted);
-
-  const tbl=['<table><tr><th>Section</th><th>Calc</th><th>Ledger</th><th>Adj</th><th>Assigned</th></tr>'];
-  raw.forEach((r,i)=>tbl.push(`<tr><td>${r.sec}</td><td>${r.calc.toFixed(2)}</td><td>${r.ledger.toFixed(2)}</td><td>${adjExact[i].toFixed(2)}</td><td>${assigned[i]}</td></tr>`));
-  tbl.push(`<tr><th colspan=4>Total</th><th>${assigned.reduce((a,b)=>a+b,0)}</th></tr></table>`);
-  document.getElementById('dutyResult').innerHTML=tbl.join('');
-
-  const allDuties=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
-  if(!allDuties[month])allDuties[month]={};
-  allDuties[month][duty]={allotted,ratios,assigned:secs.map((s,i)=>({sec:s.name,count:assigned[i]}))};
-  localStorage.setItem('monthlyDuties',JSON.stringify(allDuties));
-
-  window._lastCalc={month,duty,secs,exact,assigned};
-}
-
-function commitDuty(){
-  if(!window._lastCalc)return alert('Calculate first');
-  const {month,duty,secs,exact,assigned}=window._lastCalc;
-
-  // 1) Update cumulative ledger
-  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
-  const dLedger=ledgerAll[duty]||{};
-  const deltas={};
-  secs.forEach((s,i)=>{
-    const delta=(assigned[i]-exact[i]);
-    deltas[s.name]=+delta.toFixed(3);
-    dLedger[s.name]=((+dLedger[s.name]||0)+delta).toFixed(3);
-  });
-  ledgerAll[duty]=dLedger;
-  localStorage.setItem('ledgerData',JSON.stringify(ledgerAll));
-
-  // 2) Update month-wise ledger history
-  const hist=JSON.parse(localStorage.getItem('ledgerHistory')||'{}');
-  if(!hist[month])hist[month]={};
-  if(!hist[month][duty])hist[month][duty]={};
-  Object.keys(deltas).forEach(sec=>{
-    hist[month][duty][sec]=((+hist[month][duty][sec]||0)+deltas[sec]);
-  });
-  localStorage.setItem('ledgerHistory',JSON.stringify(hist));
-
-  alert('✅ Committed');
-  renderLedger();
-  renderSummary();
-}
-
-/* ---------- Ledger Rendering (month-wise with fallback) ---------- */
-let _lastDeletedBackup=null;let _undoTimer=null;
-
-function getLatestMonthWithData(targetLbl, hist){
-  if(!hist || Object.keys(hist).length===0) return null;
-  if(targetLbl==="all") return null;
-  const target=parseMonthLabel(targetLbl);
-  const months=Object.keys(hist).sort((a,b)=>parseMonthLabel(a)-parseMonthLabel(b));
-  let candidate=null;
-  months.forEach(m=>{
-    const d=parseMonthLabel(m);
-    if(d<=target && Object.keys(hist[m]).length>0) candidate=m;
-  });
-  return candidate;
-}
-
-function renderLedger(){
-  const ledgerSel=document.getElementById('ledgerMonth').value;
-  const sections=JSON.parse(localStorage.getItem('sectionsData')||'[]');
-  if(!sections.length){document.getElementById('ledgerBox').innerHTML='<div class="muted">No sections available.</div>';return;}
-  const sectionNames=sections.map(s=>s.name);
-
-  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');          // cumulative
-  const hist=JSON.parse(localStorage.getItem('ledgerHistory')||'{}');            // per-month
-
-  let dataSource={}, labelNote='';
-  if(ledgerSel==='all'){
-    dataSource=ledgerAll;
-  }else{
-    let monthToUse=ledgerSel;
-    if(!hist[monthToUse] || Object.keys(hist[monthToUse]).length===0){
-      const fallback=getLatestMonthWithData(ledgerSel, hist);
-      if(fallback){
-        monthToUse=fallback;
-        labelNote=`Showing <b>${fallback}</b> (latest available)`;
-      }else{
-        document.getElementById('ledgerBox').innerHTML='<div class="muted">No ledger available for selected month or earlier.</div>';
-        return;
-      }
-    }
-    dataSource=hist[monthToUse]||{};
-    if(!labelNote) labelNote=`Showing <b>${monthToUse}</b>`;
+  let k=0;
+  while(rem>0 && k<frac.length){
+    floor[frac[k].i]++;
+    rem--;
+    k++;
   }
+  return floor;
+}
 
-  const duties=Object.keys(dataSource);
-  if(!duties.length){
-    document.getElementById('ledgerBox').innerHTML='<div class="muted">No ledger data yet.</div>';
+
+/* ============================================================
+   LOAD DUTIES FOR MONTH
+============================================================ */
+function loadMonthDuties(){
+  const m=document.getElementById("monthSelect").value;
+  const data=JSON.parse(localStorage.getItem("monthlyDuties")||"{}");
+
+  if(data[m]){
+    document.getElementById("dutyResult").innerHTML=`<b>${m}</b> data loaded.`;
+  } else {
+    document.getElementById("dutyResult").innerHTML="No data yet.";
+  }
+}
+
+
+/* ============================================================
+   CALCULATE DUTY (SECTION ASSIGNMENT RANDOMIZED)
+============================================================ */
+function calculateDuty(){
+  const month=document.getElementById("monthSelect").value;
+  const duty=document.getElementById("dutySelect").value;
+  const allotted=+document.getElementById("allotted").value;
+
+  const ratios={
+    WO:+rWO.value,
+    SGT:+rSGT.value,
+    CPL:+rCPL.value,
+    LAC:+rLAC.value
+  };
+
+  const secs=JSON.parse(localStorage.getItem("sectionsData")||"[]");
+  if(!secs.length){
+    alert("Add sections first.");
     return;
   }
 
-  let html = '<table><tr><th>Duty</th>';
-  sectionNames.forEach(s=>html+=`<th>${s}</th>`);
-  html+='<th>Total</th><th>Action</th></tr>';
+  const ledgerAll=JSON.parse(localStorage.getItem("ledgerData")||"{}");
+  const dLedger=ledgerAll[duty]||{};
+
+  let raw=secs.map(s=>{
+    const calc = s.WO*ratios.WO + s.SGT*ratios.SGT + s.CPL*ratios.CPL + s.LAC*ratios.LAC;
+    return {
+      sec:s.name,
+      calc,
+      ledger:+dLedger[s.name]||0
+    };
+  });
+
+  const totalCalc=raw.reduce((a,b)=>a+b.calc,0);
+
+  const exact = raw.map(r => totalCalc ? (r.calc/totalCalc)*allotted : 0);
+  const adj   = exact.map((x,i)=>Math.max(0, x - raw[i].ledger));
+  const assigned = largestRemainder(adj, allotted);
+
+  // RANDOMIZE ORDER OF SECTIONS
+  let assignedArr = secs.map((s,i)=>({sec:s.name, count:assigned[i]}));
+  assignedArr.sort(() => Math.random() - 0.5);
+
+  // preview table (sorted by input section order for display)
+  let out = [`<table>
+              <tr><th>Section</th><th>Calc</th><th>Ledger</th><th>Adj</th><th>Assigned</th></tr>`];
+
+  raw.forEach((r,i)=>{
+    out.push(`
+      <tr>
+        <td>${assignedArr[i].sec}</td>
+        <td>${r.calc.toFixed(2)}</td>
+        <td>${r.ledger.toFixed(2)}</td>
+        <td>${adj[i].toFixed(2)}</td>
+        <td>${assignedArr.find(a=>a.sec===r.sec).count}</td>
+      </tr>
+    `);
+  });
+
+  out.push(`<tr><th colspan=4>Total</th><th>${assigned.reduce((a,b)=>a+b,0)}</th></tr></table>`);
+
+  document.getElementById("dutyResult").innerHTML = out.join("");
+
+  // save temporary result
+  const all=JSON.parse(localStorage.getItem("monthlyDuties")||"{}");
+  if(!all[month]) all[month]={};
+
+  all[month][duty] = {
+    allotted,
+    ratios,
+    assigned: assignedArr
+  };
+
+  localStorage.setItem("monthlyDuties", JSON.stringify(all));
+
+  window._lastCalc = {month, duty, secs, exact, assigned, assignedArr};
+}
+/* ============================================================
+   COMMIT DUTY → UPDATE LEDGER + HISTORY
+============================================================ */
+function commitDuty(){
+  if(!window._lastCalc){
+    alert("Calculate first.");
+    return;
+  }
+
+  const {month, duty, secs, exact, assignedArr} = window._lastCalc;
+
+  const ledgerAll = JSON.parse(localStorage.getItem("ledgerData")||"{}");
+  const monthly = JSON.parse(localStorage.getItem("monthlyDuties")||"{}");
+  const hist = JSON.parse(localStorage.getItem("ledgerHistory")||"{}");
+
+  const dLedger = ledgerAll[duty] || {};
+  const deltas = {};
+
+  secs.forEach((s,i)=>{
+    const secName = assignedArr[i].sec;
+    const assigned = assignedArr.find(x=>x.sec===secName).count;
+    const delta = assigned - exact[i];
+
+    deltas[secName] = +delta.toFixed(3);
+    dLedger[secName] = ((+dLedger[secName] || 0) + delta).toFixed(3);
+  });
+
+  ledgerAll[duty] = dLedger;
+
+  // month-wise ledger history
+  if(!hist[month]) hist[month]={};
+  if(!hist[month][duty]) hist[month][duty]={};
+
+  Object.keys(deltas).forEach(sec=>{
+    hist[month][duty][sec] =
+      ((+hist[month][duty][sec] || 0) + deltas[sec]);
+  });
+
+  localStorage.setItem("ledgerData", JSON.stringify(ledgerAll));
+  localStorage.setItem("ledgerHistory", JSON.stringify(hist));
+  localStorage.setItem("monthlyDuties", JSON.stringify(monthly));
+
+  alert("✅ Committed");
+  renderLedger();
+  renderSummary();
+}
+
+
+/* ============================================================
+   LEDGER RENDERING
+============================================================ */
+function getLatestMonthWithData(targetLbl, hist){
+  if(!hist || Object.keys(hist).length===0) return null;
+  if(targetLbl==="all") return null;
+
+  const target = parseMonthLabel(targetLbl);
+  const months = Object.keys(hist)
+    .sort((a,b)=>parseMonthLabel(a)-parseMonthLabel(b));
+
+  let best=null;
+
+  months.forEach(m=>{
+    const dt=parseMonthLabel(m);
+    if(dt <= target && Object.keys(hist[m]).length>0){
+      best=m;
+    }
+  });
+
+  return best;
+}
+
+function renderLedger(){
+  const ledgerSel = document.getElementById("ledgerMonth").value;
+
+  const sections = JSON.parse(localStorage.getItem("sectionsData")||"[]");
+  const ledgerAll = JSON.parse(localStorage.getItem("ledgerData")||"{}");
+  const hist = JSON.parse(localStorage.getItem("ledgerHistory")||"{}");
+
+  if(!sections.length){
+    document.getElementById("ledgerBox").innerHTML =
+      "<div class='muted'>No sections available.</div>";
+    return;
+  }
+
+  const names = sections.map(s=>s.name);
+
+  let source={}, note="";
+
+  if(ledgerSel==="all"){
+    source=ledgerAll;
+  }
+  else {
+    let use=ledgerSel;
+
+    if(!hist[use] || Object.keys(hist[use]).length===0){
+      const fallback=getLatestMonthWithData(ledgerSel, hist);
+      if(fallback){
+        use=fallback;
+        note=`Showing <b>${fallback}</b> (latest available)`;
+      } else {
+        document.getElementById("ledgerBox").innerHTML =
+          "<div class='muted'>No ledger available for selected month or earlier.</div>";
+        return;
+      }
+    }
+
+    source = hist[use] || {};
+    if(!note) note=`Showing <b>${use}</b>`;
+  }
+
+  const duties = Object.keys(source);
+  if(!duties.length){
+    document.getElementById("ledgerBox").innerHTML =
+      "<div class='muted'>No ledger data.</div>";
+    return;
+  }
+
+  let html="<table><tr><th>Duty</th>";
+  names.forEach(n=>html+=`<th>${n}</th>`);
+  html+="<th>Total</th><th>Action</th></tr>";
 
   duties.forEach(duty=>{
     let rowTotal=0;
+
     html+=`<tr><td><b>${duty}</b></td>`;
-    sectionNames.forEach(sec=>{
-      const val=parseFloat((dataSource[duty]?.[sec])||0);
-      const color=val>0?'style="color:green;font-weight:600;"':val<0?'style="color:red;font-weight:600;"':'';
+
+    names.forEach(sec=>{
+      const val=parseFloat(source[duty]?.[sec]||0);
+      const style =
+          val>0 ? 'style="color:green;font-weight:600;"':
+          val<0 ? 'style="color:red;font-weight:600;"':
+          "";
       rowTotal+=val;
-      html+=`<td ${color}>${isNaN(val)?'0.00':val.toFixed(2)}</td>`;
+
+      html+=`<td ${style}>${val.toFixed(2)}</td>`;
     });
-    const colorT=rowTotal>0?'style="color:green;font-weight:700;"':rowTotal<0?'style="color:red;font-weight:700;"':'';
-    html+=`<td ${colorT}>${rowTotal.toFixed(2)}</td>
-           <td><button class="btn-ghost" title="Delete everywhere (all months)" onclick="deleteLedgerEntry('${duty}')">🗑️</button></td></tr>`;
+
+    const st =
+        rowTotal>0 ? 'style="color:green;font-weight:700;"':
+        rowTotal<0 ? 'style="color:red;font-weight:700;"':"";
+
+    html+=`
+      <td ${st}>${rowTotal.toFixed(2)}</td>
+      <td><button class="btn-ghost" onclick="deleteLedgerEntry('${duty}')">🗑️</button></td>
+    </tr>
+    `;
   });
-  html+='</table>';
-  html+='<div class="muted" style="margin-top:8px;">🟢 Positive = Section excess | 🔴 Negative = Section deficit</div>';
-  if(labelNote) html+=`<div class="note">${labelNote}</div>`;
-  document.getElementById('ledgerBox').innerHTML=html;
+
+  html+="</table>";
+  html+="<div class='muted'>🟢 Positive = Excess | 🔴 Negative = Deficit</div>";
+
+  if(note) html+=`<div class="note">${note}</div>`;
+
+  document.getElementById("ledgerBox").innerHTML = html;
 }
 
-/* ---------- Delete (all months) + Undo + Clean ---------- */
+
+/* ============================================================
+   DELETE LEDGER ENTRY + UNDO
+============================================================ */
+let _lastDeletedBackup=null;
+let _undoTimer=null;
+
 function deleteLedgerEntry(duty){
-  if(!confirm(`Delete "${duty}" from ledger and ALL months? This also removes it from Monthly Summary.`))return;
+  if(!confirm(`Delete "${duty}" everywhere?`)) return;
 
-  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
-  const monthly=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
-  const hist=JSON.parse(localStorage.getItem('ledgerHistory')||'{}');
+  const ledgerAll = JSON.parse(localStorage.getItem("ledgerData")||"{}");
+  const monthly = JSON.parse(localStorage.getItem("monthlyDuties")||"{}");
+  const hist = JSON.parse(localStorage.getItem("ledgerHistory")||"{}");
 
-  // Backup
-  _lastDeletedBackup={
+  // backup
+  _lastDeletedBackup = {
     duty,
     ledgerData: ledgerAll[duty]||null,
-    monthlyData: {},
-    histData: {}
+    monthlyData:{},
+    histData:{}
   };
-  for(const m in monthly){ if(monthly[m][duty]) _lastDeletedBackup.monthlyData[m]=monthly[m][duty]; }
-  for(const m in hist){ if(hist[m][duty]) _lastDeletedBackup.histData[m]=hist[m][duty]; }
 
-  // Delete everywhere
+  Object.keys(monthly).forEach(m=>{
+    if(monthly[m][duty]) _lastDeletedBackup.monthlyData[m]=monthly[m][duty];
+  });
+
+  Object.keys(hist).forEach(m=>{
+    if(hist[m][duty]) _lastDeletedBackup.histData[m]=hist[m][duty];
+  });
+
   delete ledgerAll[duty];
-  for(const m in monthly){
+
+  Object.keys(monthly).forEach(m=>{
     if(monthly[m][duty]) delete monthly[m][duty];
     if(Object.keys(monthly[m]).length===0) delete monthly[m];
-  }
-  for(const m in hist){
+  });
+
+  Object.keys(hist).forEach(m=>{
     if(hist[m][duty]) delete hist[m][duty];
     if(Object.keys(hist[m]).length===0) delete hist[m];
-  }
+  });
 
-  // Save
-  localStorage.setItem('ledgerData',JSON.stringify(ledgerAll));
-  localStorage.setItem('monthlyDuties',JSON.stringify(monthly));
-  localStorage.setItem('ledgerHistory',JSON.stringify(hist));
+  localStorage.setItem("ledgerData", JSON.stringify(ledgerAll));
+  localStorage.setItem("monthlyDuties", JSON.stringify(monthly));
+  localStorage.setItem("ledgerHistory", JSON.stringify(hist));
 
-  // Reconcile and refresh
-  reconcileMonthly(); // safety clean (removes ghosts like WBC)
+  reconcileMonthly();
   renderLedger();
   renderSummary();
+
   showUndoBanner(duty);
 }
 
 function showUndoBanner(duty){
-  const old=document.getElementById('undoBanner'); if(old) old.remove();
-  const banner=document.createElement('div');
-  banner.id='undoBanner';
-  banner.style.position='fixed';
-  banner.style.bottom='10px';
-  banner.style.left='50%';
-  banner.style.transform='translateX(-50%)';
-  banner.style.background='#2563eb';
-  banner.style.color='white';
-  banner.style.padding='10px 18px';
-  banner.style.borderRadius='8px';
-  banner.style.fontSize='14px';
-  banner.style.boxShadow='0 3px 8px rgba(0,0,0,0.3)';
-  banner.style.zIndex='9999';
-  banner.innerHTML=`Deleted <b>${duty}</b> from all months. &nbsp; <button id="undoBtn" style="background:white;color:#2563eb;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-weight:600;">Undo</button>`;
-  document.body.appendChild(banner);
-  document.getElementById('undoBtn').onclick=restoreDeletedDuty;
+  const old=document.getElementById("undoBanner");
+  if(old) old.remove();
+
+  const b=document.createElement("div");
+  b.id="undoBanner";
+  b.style.position="fixed";
+  b.style.bottom="15px";
+  b.style.left="50%";
+  b.style.transform="translateX(-50%)";
+  b.style.background="#2563eb";
+  b.style.color="white";
+  b.style.padding="10px 18px";
+  b.style.borderRadius="8px";
+  b.style.fontSize="14px";
+  b.style.boxShadow="0 3px 8px rgba(0,0,0,0.3)";
+  b.style.zIndex="9999";
+
+  b.innerHTML = `
+    Deleted <b>${duty}</b>.
+    <button id="undoBtn" style="margin-left:10px;background:white;color:#2563eb;border:0;padding:4px 10px;border-radius:5px;cursor:pointer;font-weight:bold;">
+      Undo
+    </button>
+  `;
+
+  document.body.appendChild(b);
+
+  document.getElementById("undoBtn").onclick = restoreDeletedDuty;
+
   clearTimeout(_undoTimer);
-  _undoTimer=setTimeout(()=>{if(banner.parentNode)banner.remove();_lastDeletedBackup=null;},10000);
+  _undoTimer = setTimeout(()=>{
+    if(b.parentNode) b.remove();
+    _lastDeletedBackup=null;
+  },10000);
 }
 
 function restoreDeletedDuty(){
   if(!_lastDeletedBackup) return;
-  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
-  const monthly=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
-  const hist=JSON.parse(localStorage.getItem('ledgerHistory')||'{}');
-  const {duty,ledgerData,monthlyData,histData}=_lastDeletedBackup;
+
+  const ledgerAll = JSON.parse(localStorage.getItem("ledgerData")||"{}");
+  const monthly = JSON.parse(localStorage.getItem("monthlyDuties")||"{}");
+  const hist = JSON.parse(localStorage.getItem("ledgerHistory")||"{}");
+
+  const {duty, ledgerData, monthlyData, histData} = _lastDeletedBackup;
 
   if(ledgerData) ledgerAll[duty]=ledgerData;
-  for(const m in monthlyData){
+
+  Object.keys(monthlyData).forEach(m=>{
     if(!monthly[m]) monthly[m]={};
-    monthly[m][duty]=monthlyData[m];
-  }
-  for(const m in histData){
+    monthly[m][duty] = monthlyData[m];
+  });
+
+  Object.keys(histData).forEach(m=>{
     if(!hist[m]) hist[m]={};
-    hist[m][duty]=histData[m];
-  }
+    hist[m][duty] = histData[m];
+  });
 
-  localStorage.setItem('ledgerData',JSON.stringify(ledgerAll));
-  localStorage.setItem('monthlyDuties',JSON.stringify(monthly));
-  localStorage.setItem('ledgerHistory',JSON.stringify(hist));
+  localStorage.setItem("ledgerData", JSON.stringify(ledgerAll));
+  localStorage.setItem("monthlyDuties", JSON.stringify(monthly));
+  localStorage.setItem("ledgerHistory", JSON.stringify(hist));
 
-  const banner=document.getElementById('undoBanner'); if(banner) banner.remove();
-  alert(`✅ Restored "${duty}" across all months.`);
+  const b=document.getElementById("undoBanner");
+  if(b) b.remove();
+
+  alert(`Restored "${duty}"`);
   renderLedger();
   renderSummary();
+
   _lastDeletedBackup=null;
   clearTimeout(_undoTimer);
 }
 
-/* ---------- Monthly Summary ---------- */
-function renderSummary(){
-  const month=document.getElementById('summaryMonth').value;
-  const all=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
-  const data=all[month];
-  const secs=JSON.parse(localStorage.getItem('sectionsData')||'[]');
-  if(!data){document.getElementById('summaryBox').innerHTML=`<b>${month}</b>: No data.`;return;}
-  const duties=Object.keys(data);
-  if(!duties.length){document.getElementById('summaryBox').innerHTML=`<b>${month}</b>: No data.`;return;}
-  const secMap={};secs.forEach(s=>secMap[s.name]={});
-  duties.forEach(d=>{(data[d]?.assigned||[]).forEach(a=>secMap[a.sec][d]=a.count);});
-  let html='<table><tr><th>Section</th>'+duties.map(d=>`<th>${d}</th>`).join('')+'<th>Total</th></tr>';
-  let grandTotals=new Array(duties.length).fill(0),grandSum=0;
-  for(const s in secMap){
-    let rowTotal=0;
-    const row=duties.map((d,i)=>{const val=secMap[s][d]||0;grandTotals[i]+=val;rowTotal+=val;return `<td>${val}</td>`;}).join('');
-    grandSum+=rowTotal;
-    html+=`<tr><td>${s}</td>${row}<td><b>${rowTotal}</b></td></tr>`;
-  }
-  html+=`<tr><th>Total</th>${grandTotals.map(g=>`<th>${g}</th>`).join('')}<th>${grandSum}</th></tr></table>`;
-  document.getElementById('summaryBox').innerHTML=html;
-}
 
-/* ---------- Reconcile Monthly (remove duties not in ledger) ---------- */
+/* ============================================================
+   CLEAN MONTHLY (remove ghost duties)
+============================================================ */
 function reconcileMonthly(){
-  const ledgerAll=JSON.parse(localStorage.getItem('ledgerData')||'{}');
-  const monthly=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
+  const ledgerAll = JSON.parse(localStorage.getItem("ledgerData")||"{}");
+  const monthly = JSON.parse(localStorage.getItem("monthlyDuties")||"{}");
   let changed=false;
-  for(const m in monthly){
-    for(const d in monthly[m]){
-      if(!ledgerAll[d]){ delete monthly[m][d]; changed=true; }
+
+  Object.keys(monthly).forEach(m=>{
+    Object.keys(monthly[m]).forEach(d=>{
+      if(!ledgerAll[d]){
+        delete monthly[m][d];
+        changed=true;
+      }
+    });
+    if(Object.keys(monthly[m]).length===0){
+      delete monthly[m];
+      changed=true;
     }
-    if(Object.keys(monthly[m]).length===0){ delete monthly[m]; changed=true; }
+  });
+
+  if(changed){
+    localStorage.setItem("monthlyDuties", JSON.stringify(monthly));
   }
-  if(changed) localStorage.setItem('monthlyDuties',JSON.stringify(monthly));
 }
 
-/* ---------- Print PDF ---------- */
+
+/* ============================================================
+   MONTHLY SUMMARY
+============================================================ */
+function renderSummary(){
+  const m=document.getElementById("summaryMonth").value;
+  const all=JSON.parse(localStorage.getItem("monthlyDuties")||"{}");
+  const secs=JSON.parse(localStorage.getItem("sectionsData")||"[]");
+
+  const data=all[m];
+  if(!data){
+    document.getElementById("summaryBox").innerHTML=`<b>${m}</b>: No data.`;
+    return;
+  }
+
+  const duties=Object.keys(data);
+  if(!duties.length){
+    document.getElementById("summaryBox").innerHTML=`<b>${m}</b>: No data.`;
+    return;
+  }
+
+  const map={};
+  secs.forEach(s=>map[s.name]={});
+
+  duties.forEach(d=>{
+    (data[d].assigned||[]).forEach(a=>{
+      map[a.sec][d]=a.count;
+    });
+  });
+
+  let html="<table><tr><th>Section</th>";
+  html+=duties.map(d=>`<th>${d}</th>`).join("");
+  html+="<th>Total</th></tr>";
+
+  let columnTotals=new Array(duties.length).fill(0);
+  let overall=0;
+
+  for(const sec in map){
+    let rowSum=0;
+    const row=duties.map((d,i)=>{
+      const v=map[sec][d]||0;
+      columnTotals[i]+=v;
+      rowSum+=v;
+      return `<td>${v}</td>`;
+    }).join("");
+
+    overall+=rowSum;
+
+    html+=`<tr><td>${sec}</td>${row}<td><b>${rowSum}</b></td></tr>`;
+  }
+
+  html+=`<tr><th>Total</th>${columnTotals.map(x=>`<th>${x}</th>`).join("")}<th>${overall}</th></tr>`;
+  html+="</table>";
+
+  document.getElementById("summaryBox").innerHTML = html;
+}
+
+
+/* ============================================================
+   PDF EXPORT FOR SUMMARY
+============================================================ */
 function downloadSummaryPDF(){
-  const month=document.getElementById('summaryMonth').value;
-  const html=document.getElementById('summaryBox').innerHTML;
-  const w=window.open('','_blank');
-  w.document.write(`<html><head><title>${month} Summary</title></head><body>${html}</body></html>`);
-  w.print();w.close();
+  const m=document.getElementById("summaryMonth").value;
+  const html=document.getElementById("summaryBox").innerHTML;
+
+  const w=window.open("","_blank");
+  w.document.write(`<html><body>${html}</body></html>`);
+  w.print();
+  w.close();
+}
+/* ============================================================
+     DUTY DATES TAB: LOAD DUTIES FOR SELECTED MONTH
+============================================================ */
+function loadDatesDutyDropdown(){
+  const month = document.getElementById("datesMonth").value;
+  const all = JSON.parse(localStorage.getItem("monthlyDuties") || "{}");
+  const sel = document.getElementById("datesDuty");
+
+  sel.innerHTML = "";
+
+  if(all[month]){
+    Object.keys(all[month]).forEach(duty=>{
+      const o=document.createElement("option");
+      o.value=duty;
+      o.textContent=duty;
+      sel.appendChild(o);
+    });
+  }
+
+  loadHolidayList();
+  loadManualDates();
 }
 
-/* ---------- Misc ---------- */
-function loadMonthDuties(){
-  const month=document.getElementById('monthSelect').value;
-  const data=JSON.parse(localStorage.getItem('monthlyDuties')||'{}');
-  document.getElementById('dutyResult').innerHTML=data[month]?`<b>${month}</b> data loaded.`:`No data yet.`;
+
+/* ============================================================
+     HOLIDAY MANAGEMENT
+============================================================ */
+function loadHolidayList(){
+  const m=document.getElementById("datesMonth").value;
+  const store=JSON.parse(localStorage.getItem("holidayData")||"{}");
+  const arr=store[m]||[];
+  const box=document.getElementById("holidayListBox");
+
+  box.innerHTML="";
+
+  arr.forEach(dt=>{
+    const tag=document.createElement("div");
+    tag.className="holidayTag";
+    tag.innerHTML = `${dt} <button onclick="removeHoliday('${dt}')">x</button>`;
+    box.appendChild(tag);
+  });
 }
 
-/* ---------- Boot ---------- */
-window.onload=()=>{
-  const s=JSON.parse(localStorage.getItem('sectionsData')||'[]');
-  if(s.length)s.forEach(addSection);else addSection();
-  reconcileMonthly();               // Clean lingering duties (e.g., old WBC) from monthly if not in ledger
+function addHoliday(){
+  const m=document.getElementById("datesMonth").value;
+  const val=document.getElementById("holidayInput").value;
+  if(!val) return;
+
+  const store=JSON.parse(localStorage.getItem("holidayData")||"{}");
+  if(!store[m]) store[m]=[];
+
+  if(!store[m].includes(val)) store[m].push(val);
+
+  localStorage.setItem("holidayData", JSON.stringify(store));
+  document.getElementById("holidayInput").value="";
+  loadHolidayList();
+}
+
+function removeHoliday(date){
+  const m=document.getElementById("datesMonth").value;
+  const store=JSON.parse(localStorage.getItem("holidayData")||"{}");
+
+  if(store[m]){
+    store[m] = store[m].filter(x=>x!==date);
+    localStorage.setItem("holidayData", JSON.stringify(store));
+  }
+  loadHolidayList();
+}
+
+
+/* ============================================================
+     MANUAL DATES MANAGEMENT
+============================================================ */
+function loadManualDates(){
+  const m=document.getElementById("datesMonth").value;
+  const d=document.getElementById("datesDuty").value;
+
+  const store=JSON.parse(localStorage.getItem("manualDutyDates")||"{}");
+  const arr = store[m] && store[m][d] ? store[m][d] : [];
+
+  const box=document.getElementById("manualDatesList");
+  box.innerHTML="";
+
+  arr.forEach(dt=>{
+    const tag=document.createElement("div");
+    tag.className="holidayTag";
+    tag.innerHTML = `${dt} <button onclick="removeManualDutyDate('${dt}')">x</button>`;
+    box.appendChild(tag);
+  });
+}
+
+function addManualDutyDate(){
+  const m=document.getElementById("datesMonth").value;
+  const d=document.getElementById("datesDuty").value;
+  const val=document.getElementById("manualDateInput").value;
+  if(!val) return;
+
+  const store=JSON.parse(localStorage.getItem("manualDutyDates")||"{}");
+  if(!store[m]) store[m]={};
+  if(!store[m][d]) store[m][d]=[];
+
+  if(!store[m][d].includes(val)) store[m][d].push(val);
+
+  localStorage.setItem("manualDutyDates", JSON.stringify(store));
+  document.getElementById("manualDateInput").value="";
+  loadManualDates();
+}
+
+function removeManualDutyDate(val){
+  const m=document.getElementById("datesMonth").value;
+  const d=document.getElementById("datesDuty").value;
+
+  const store=JSON.parse(localStorage.getItem("manualDutyDates")||"{}");
+  if(store[m] && store[m][d]){
+    store[m][d] = store[m][d].filter(x=>x!==val);
+    localStorage.setItem("manualDutyDates", JSON.stringify(store));
+  }
+  loadManualDates();
+}
+
+
+/* ============================================================
+     MULTIPLE MANUAL DATES (COMMA INPUT)
+============================================================ */
+function addMultipleManualDates(){
+  const m=document.getElementById("datesMonth").value;
+  const d=document.getElementById("datesDuty").value;
+  const raw=document.getElementById("multiDatesInput").value.trim();
+  if(!raw) return;
+
+  const parts = raw.split(",").map(x=>x.trim()).filter(x=>x);
+
+  const dt=parseMonthLabel(m);
+  const y=dt.getFullYear();
+  const mm=(dt.getMonth()+1).toString().padStart(2,"0");
+
+  const formatted = parts.map(day=>{
+    day=day.padStart(2,"0");
+    return `${y}-${mm}-${day}`;
+  });
+
+  const store=JSON.parse(localStorage.getItem("manualDutyDates")||"{}");
+  if(!store[m]) store[m]={};
+  if(!store[m][d]) store[m][d]=[];
+
+  formatted.forEach(f=>{
+    if(!store[m][d].includes(f)) store[m][d].push(f);
+  });
+
+  localStorage.setItem("manualDutyDates", JSON.stringify(store));
+  document.getElementById("multiDatesInput").value="";
+  loadManualDates();
+}
+
+
+/* ============================================================
+     WEIGHTED NON-REPEATING SECTION ORDER
+============================================================ */
+function generateSectionRotation(dutyAssignedList){
+  
+  const countMap = {};
+  dutyAssignedList.forEach(s => countMap[s] = (countMap[s] || 0) + 1);
+
+  let pool = Object.keys(countMap).map(s => ({
+    sec: s,
+    remaining: countMap[s]
+  }));
+
+  let result=[];
+  let last=null;
+
+  for(let i=0;i<dutyAssignedList.length;i++){
+
+    let choices = pool.filter(p=>p.remaining>0 && p.sec!==last);
+
+    if(choices.length === 0){
+      choices = pool.filter(p=>p.remaining>0);
+    }
+
+    let total = choices.reduce((a,b)=>a+b.remaining,0);
+    let r = Math.random()*total;
+
+    let pick=null;
+    for(let c of choices){
+      if(r < c.remaining){
+        pick=c;
+        break;
+      }
+      r -= c.remaining;
+    }
+
+    result.push(pick.sec);
+    pick.remaining--;
+    last = pick.sec;
+
+    pool = pool.filter(p=>p.remaining>0);
+  }
+
+  return result;
+}
+
+
+/* ============================================================
+     MANUAL DISTRIBUTE DATES (NO AUTO GENERATE)
+============================================================ */
+function generateFromManualDates(){
+
+  const m=document.getElementById("datesMonth").value;
+  const d=document.getElementById("datesDuty").value;
+
+  const store=JSON.parse(localStorage.getItem("manualDutyDates")||"{}");
+
+  if(!store[m] || !store[m][d] || store[m][d].length===0){
+    alert("Add manual dates first.");
+    return;
+  }
+
+  const manualDates = store[m][d].sort();
+
+  const monthly=JSON.parse(localStorage.getItem("monthlyDuties")||"{}");
+
+  if(!monthly[m] || !monthly[m][d]){
+    alert("Commit duty calculation first.");
+    return;
+  }
+
+  const assigned = monthly[m][d].assigned;
+
+  let secList=[];
+  assigned.forEach(a=>{
+    for(let i=0;i<a.count;i++){
+      secList.push(a.sec);
+    }
+  });
+
+  if(secList.length !== manualDates.length){
+    alert(`You entered ${manualDates.length} dates but required ${secList.length}.`);
+    return;
+  }
+
+  const holidays=(JSON.parse(localStorage.getItem("holidayData")||"{}")[m]) || [];
+
+  const rotation = generateSectionRotation(secList);
+
+  const results=[];
+
+  manualDates.forEach((dt,i)=>{
+    const dObj=new Date(dt);
+    results.push({
+      date:dt,
+      section:rotation[i],
+      weekend:(dObj.getDay()===0 || dObj.getDay()===6),
+      holiday:holidays.includes(dt)
+    });
+  });
+
+  renderDatesTable(results);
+}
+
+
+
+/* ============================================================
+     RENDER TABLE
+============================================================ */
+function renderDatesTable(arr){
+  const box=document.getElementById("datesTableContainer");
+
+  if(!arr.length){
+    box.innerHTML="<div class='muted'>No data.</div>";
+    return;
+  }
+
+  let html="<table><tr><th>Date</th><th>Day</th><th>Section</th></tr>";
+
+  arr.forEach(row=>{
+    const d=new Date(row.date);
+    const day=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()];
+
+    let cls = row.holiday ? "holidayCell" : (row.weekend ? "weekendCell" : "");
+
+    html+=`
+      <tr class="${cls}">
+        <td>${row.date}</td>
+        <td>${day}</td>
+        <td>${row.section}</td>
+      </tr>`;
+  });
+
+  html+="</table>";
+
+  box.innerHTML = html;
+  window._lastDateGen = arr;
+}
+
+
+/* ============================================================
+     SAVE DISTRIBUTED DATES
+============================================================ */
+function saveDutyDates(){
+  if(!window._lastDateGen){
+    alert("Distribute dates first.");
+    return;
+  }
+
+  const m=document.getElementById("datesMonth").value;
+  const d=document.getElementById("datesDuty").value;
+
+  const store=JSON.parse(localStorage.getItem("dutyDatesData")||"{}");
+  if(!store[m]) store[m]={};
+
+  store[m][d] = window._lastDateGen;
+  localStorage.setItem("dutyDatesData", JSON.stringify(store));
+
+  const hist=JSON.parse(localStorage.getItem("dutyDateHistory")||"{}");
+  if(!hist[m]) hist[m]={};
+
+  const wk={};
+  window._lastDateGen.forEach(x=>{
+    if(x.weekend || x.holiday){
+      wk[x.section] = (wk[x.section] || 0) + 1;
+    }
+  });
+
+  hist[m][d] = wk;
+  localStorage.setItem("dutyDateHistory", JSON.stringify(hist));
+
+  showSaveBanner();
+}
+
+function showSaveBanner(){
+  const b=document.getElementById("saveBanner");
+  b.style.display="block";
+  setTimeout(()=>{b.style.display="none";},2000);
+}
+/* ============================================================
+   HISTORY TAB: SWITCH BETWEEN 3 SUB-VIEWS
+============================================================ */
+function setHistoryView(n){
+  document.getElementById("hTab1").classList.remove("active");
+  document.getElementById("hTab2").classList.remove("active");
+  document.getElementById("hTab3").classList.remove("active");
+
+  document.getElementById("historyView1").style.display="none";
+  document.getElementById("historyView2").style.display="none";
+  document.getElementById("historyView3").style.display="none";
+
+  if(n===1){
+    document.getElementById("hTab1").classList.add("active");
+    document.getElementById("historyView1").style.display="block";
+    loadHistoryDutyDropdown();
+    renderHistoryView1();
+  }
+  if(n===2){
+    document.getElementById("hTab2").classList.add("active");
+    document.getElementById("historyView2").style.display="block";
+    renderHistoryView2();
+  }
+  if(n===3){
+    document.getElementById("hTab3").classList.add("active");
+    document.getElementById("historyView3").style.display="block";
+    renderHistoryView3();
+  }
+}
+
+
+/* ============================================================
+   HISTORY VIEW 1 — BY MONTH + DUTY
+============================================================ */
+function loadHistoryDutyDropdown(){
+  const m=document.getElementById("historyMonth1").value;
+  const data=JSON.parse(localStorage.getItem("dutyDatesData")||"{}");
+  const sel=document.getElementById("historyDuty1");
+
+  sel.innerHTML="";
+
+  if(data[m]){
+    Object.keys(data[m]).forEach(d=>{
+      const opt=document.createElement("option");
+      opt.value=d;
+      opt.textContent=d;
+      sel.appendChild(opt);
+    });
+  }
+
+  renderHistoryView1();
+}
+
+function renderHistoryView1(){
+  const m=document.getElementById("historyMonth1").value;
+  const d=document.getElementById("historyDuty1").value;
+
+  const data=JSON.parse(localStorage.getItem("dutyDatesData")||"{}");
+
+  if(!data[m] || !data[m][d]){
+    document.getElementById("historyTable1").innerHTML="No data.";
+    return;
+  }
+
+  const arr=data[m][d];
+  let html="<table><tr><th>Date</th><th>Day</th><th>Duty</th><th>Section</th></tr>";
+
+  arr.forEach(x=>{
+    const dt=new Date(x.date);
+    const day=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()];
+    html+=`
+      <tr>
+        <td>${x.date}</td>
+        <td>${day}</td>
+        <td>${d}</td>
+        <td>${x.section}</td>
+      </tr>
+    `;
+  });
+
+  html+="</table>";
+  document.getElementById("historyTable1").innerHTML=html;
+}
+
+
+/* ============================================================
+   HISTORY VIEW 2 — BY MONTH, ALL DUTIES
+============================================================ */
+function renderHistoryView2(){
+  const m=document.getElementById("historyMonth2").value;
+  const data=JSON.parse(localStorage.getItem("dutyDatesData")||"{}");
+
+  if(!data[m]){
+    document.getElementById("historyTable2").innerHTML="No data.";
+    return;
+  }
+
+  let rows=[];
+
+  Object.keys(data[m]).forEach(duty=>{
+    data[m][duty].forEach(entry=>{
+      const dt=new Date(entry.date);
+      rows.push({
+        date:entry.date,
+        day:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()],
+        duty,
+        section:entry.section
+      });
+    });
+  });
+
+  rows.sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  let html="<table><tr><th>Date</th><th>Day</th><th>Duty</th><th>Section</th></tr>";
+
+  rows.forEach(r=>{
+    html+=`
+      <tr>
+        <td>${r.date}</td>
+        <td>${r.day}</td>
+        <td>${r.duty}</td>
+        <td>${r.section}</td>
+      </tr>
+    `;
+  });
+
+  html+="</table>";
+  document.getElementById("historyTable2").innerHTML=html;
+}
+
+
+/* ============================================================
+   HISTORY VIEW 3 — ALL MONTHS
+============================================================ */
+function renderHistoryView3(){
+  const data=JSON.parse(localStorage.getItem("dutyDatesData")||"{}");
+  const rows=[];
+
+  Object.keys(data).forEach(month=>{
+    Object.keys(data[month]).forEach(duty=>{
+      data[month][duty].forEach(entry=>{
+        const dt=new Date(entry.date);
+        rows.push({
+          month,
+          date:entry.date,
+          day:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()],
+          duty,
+          section:entry.section
+        });
+      });
+    });
+  });
+
+  if(rows.length===0){
+    document.getElementById("historyTable3").innerHTML="No data.";
+    return;
+  }
+
+  rows.sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  let html="<table><tr><th>Month</th><th>Date</th><th>Day</th><th>Duty</th><th>Section</th></tr>";
+
+  rows.forEach(r=>{
+    html+=`
+      <tr>
+        <td>${r.month}</td>
+        <td>${r.date}</td>
+        <td>${r.day}</td>
+        <td>${r.duty}</td>
+        <td>${r.section}</td>
+      </tr>
+    `;
+  });
+
+  html+="</table>";
+  document.getElementById("historyTable3").innerHTML=html;
+}
+
+
+/* ============================================================
+   HISTORY PDF EXPORT
+============================================================ */
+function exportHistoryPDF(view){
+  let html="";
+
+  if(view===1) html=document.getElementById("historyTable1").innerHTML;
+  if(view===2) html=document.getElementById("historyTable2").innerHTML;
+  if(view===3) html=document.getElementById("historyTable3").innerHTML;
+
+  const w=window.open("","_blank");
+  w.document.write(`<html><body>${html}</body></html>`);
+  w.print();
+  w.close();
+}
+
+
+/* ============================================================
+   INITIALIZATION — RUN ON PAGE LOAD
+============================================================ */
+window.onload = () => {
+
+  populateMonths();
+
+  // Load saved sections
+  const secs=JSON.parse(localStorage.getItem("sectionsData")||"[]");
+  if(secs.length){
+    secs.forEach(addSection);
+  } else {
+    addSection();
+  }
+
+  // Initialize Duty Dates tab dropdown
+  loadDatesDutyDropdown();
+
+  reconcileMonthly();
   renderLedger();
   renderSummary();
+
+  // History views
+  renderHistoryView1();
+  renderHistoryView2();
+  renderHistoryView3();
 };
+
 </script>
 </body>
 </html>
